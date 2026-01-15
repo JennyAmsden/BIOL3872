@@ -495,8 +495,7 @@ temps <- c(18.5, 20.2,19.8,22.1,21.5,19.0,17.8)
 mtemp <- mean(temps)
 
 #3 
-temps[temps> 20.0]
-#therefore day 2, 4, and 5 have temps above 20. 
+which(temps >20)
 #4
 range(temps)
 ```
