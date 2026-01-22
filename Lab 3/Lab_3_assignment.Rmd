@@ -2,8 +2,8 @@
 title: "Biol 3872 Lab3-Assignment"
 output: html_document
 date: "`r Sys.Date()`"
-author:
-student_id: ""
+author: "Jenny Amsden"
+student_id: "B00938233"
 editor_options: 
   chunk_output_type: console
 ---
@@ -34,24 +34,42 @@ Report your answer in the code chunks below.
 ```{r Task 1}
 #A) 
 # YOUR CODE HERE
+plot(iris$Species, iris$Petal.Length)
+longest <- "virginica"
+
 
 #B)
 # YOUR CODE HERE
+iris_setosa<- subset(iris, 
+                      Species == "setosa")
+iris_virginica<- subset(iris, 
+                      Species == "virginica")
+iris_versicolor <- subset(iris,
+                       Species == "versicolor")
+var(iris_setosa$Sepal.Width)
+var(iris_virginica$Sepal.Width)
+var(iris_versicolor$Sepal.Width)
 
+variable <- "setosa"
 ```
 :::
 \
 
 ::: {style="background-color: #44AA99; transparent; padding: 5px; border-radius: 2px;"}
 
-## 2. Task 2
+## 2. Task 2 - incomplete
 
 A)  Using `base` R, produce a `plot` of all variables excluding the `species` variable but color points by species identity. Save this plot as a .png called `base_plot.png` in your `Figures` folder. Specify figure dimensions as 12 x 12 cm with 300 DPI.
 
 ```{r Task 2}
 #A)
 # YOUR CODE HERE
+plot(iris[,-5],
+     col = iris$Species,
+     pch = 19,
+     )#choosing one column
 
+png(filename = "/Users/jennyamsden/Desktop/  /WINTER2026/Biologist's Toolkit/BIOL3872/Lab 3/Figures/base_plot.png", width = 12, height = 12, units = "cm", res = 300)
 ```
 :::
 
@@ -66,6 +84,10 @@ A)  Based on the grammar of graphics, produce a **blank plot (no data plotted)**
 ```{r Task 3}
 #A)
 # YOUR CODE HERE
+library(ggplot2)
+empty_plot <- ggplot(data = iris, aes(x = Species, y = Sepal.Width)) +
+  labs(title = "Blank")
+
 ```
 :::
 
@@ -85,6 +107,10 @@ A)  Fix the code below so that it runs and plots successfully and store it as a 
 
 # A)
 # YOUR CODE HERE
+library(ggplot2)
+fixed_traits_plot <- ggplot(data = iris, aes(x = Petal.Length, y = Sepal.Length, color = Species)) +
+  geom_point(aes(size = Petal.Width)) +
+  theme_minimal()
 ```
 :::
 
@@ -105,7 +131,11 @@ A)  Fix and modify the code below and add a discretized `geom` (e.g., `hex`) wit
 #  scale_x_continuous(limits = seq(0,Inf,2))
 
 # YOUR CODE HERE
-
+fixed_traits_plot_discrete <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species))+
+  geom_hex(bins = 10) +
+  theme(legend.position = "left")+
+  scale_fill_viridis_b() +
+facet_wrap(~Species)
 ```
 :::
 
@@ -122,7 +152,16 @@ Name and store it as a plot object as `petal_plot`.
 
 #A)
 # YOUR CODE HERE
-
+petal_plot <- iris %>% 
+  pivot_longer(cols = c(Petal.Length, Petal.Width),
+               names_to = "Variable",
+               values_to = "Measurement") %>% 
+  ggplot(aes(x = Variable, y = Measurement, fill = Species))+
+  geom_boxplot()+
+  scale_fill_manual(aesthetics = c("setosa" = "forestgreen",
+                    "versicolor" = "skyblue",
+                    "virginica" = "maroon"))+
+  theme_minimal(base_size = 12)
 ```
 :::
 
@@ -138,9 +177,33 @@ B)  Reproduce this same plot named `facet_petal_plot_reorder` where the facets a
 
 #A)
 # YOUR CODE HERE
-
+facet_petal_plot <- iris %>% 
+  pivot_longer(cols = c(Petal.Length, Petal.Width),
+               names_to = "Variable",
+               values_to = "Measurement") %>% 
+  ggplot(aes(x = Variable, y = Measurement)) +
+  geom_point(aes(color = Species)) +
+  geom_jitter(alpha = 0.5) +
+  facet_wrap(~Species, space = "free_y")+
+  scale_fill_manual(aesthetics = c("setosa" = "forestgreen",
+                    "versicolor" = "skyblue",
+                    "virginica" = "maroon"))+
+  theme_minimal(base_size = 12)
 #B)
 # YOUR CODE HERE
+facet_petal_plot_reorder <- iris %>% 
+  pivot_longer(cols = c(Petal.Length, Petal.Width),
+               names_to = "Variable",
+               values_to = "Measurement") %>% 
+  mutate(Species = factor(Species, levels = rev(levels(iris$Species)))) %>%
+  ggplot(aes(x = Variable, y = Measurement)) +
+  geom_point(aes(color = Species)) +
+  geom_jitter(alpha = 0.5) +
+  facet_wrap(~Species, space = "free_y")+
+  scale_fill_manual(aesthetics = c("setosa" = "forestgreen",
+                    "versicolor" = "skyblue",
+                    "virginica" = "maroon"))+
+  theme_minimal(base_size = 12)
 ```
 :::
 
@@ -148,15 +211,21 @@ B)  Reproduce this same plot named `facet_petal_plot_reorder` where the facets a
 
 ## 8. Task 8
 
-A) Create a new column in the `iris` dataset with `base` R or `dplyr` called `petal_area` which compues petal area.
+A) Create a new column in the `iris` dataset with `base` R or `dplyr` called `petal_area` which computes petal area.
 
 B)  Create and store a ggplot object named `area_plot` comparing `petal_area` (x axis) to `Sepal.Length` (y axis) with points colored by species.
 
 ```{r Task 8}
 #A)
 # YOUR CODE HERE
+iris <- iris %>% 
+  mutate(iris, petal_area = Petal.Length*Petal.Width)
+
 #B)
 # YOUR CODE HERE
+area_plot <- ggplot(iris, aes(x = petal_area, y = Sepal.Length, color = Species))+
+  geom_point() +
+  theme_classic()
 ```
 :::
 
@@ -167,5 +236,7 @@ C) Save the previous plot as a `ggplot` object in your Figures folder named `are
 ```{r}
 #C)
 # YOUR CODE HERE
+ggsave("/Users/jennyamsden/Desktop/  /WINTER2026/Biologist's Toolkit/BIOL3872/Lab 3/Figures/area_plot.png",width = 12, height = 12, units = "cm", dpi = 300)
+
 ```
 Be sure before submitting this assignment to clear your and environment and re-run your code to ensure it works then submit this `markdown` file to the relevant Brightspace submission box.
