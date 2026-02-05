@@ -1,5 +1,5 @@
 ---
-title: 'Lab 5: Flow control and functions explained'
+title: 'Lab 5: Flow control and functions explained '
 subtitle: "February 5, 2025"
 author: "Liam MacNeil & Sophie Tattrie"
 output:
@@ -544,6 +544,22 @@ Then use a join to combine these two data frames. Which type of join is most app
 
 ```{r}
 # YOUR CODE HERE
+
+# Data frame 1: Average abundance per species per year
+abundance_by_year <- fish_abundance %>%
+  group_by(accepted_name, year) %>%
+  summarize(
+    mean_cpue = mean(num_cpue, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Data frame 2: Average depth per species
+depth_by_species <- fish_abundance %>%
+  group_by(accepted_name) %>%
+  summarize(
+    mean_depth = mean(depth, na.rm = TRUE),
+    .groups = "drop"
+  )
 
 ```
 
